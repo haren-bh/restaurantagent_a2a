@@ -2,7 +2,6 @@ import requests
 from urllib.parse import urljoin, urlparse
 import os
 from datetime import datetime
-from playwright.sync_api import sync_playwright
 from google.cloud import storage
 from restaurantagent.tools.vertexai import call_gemini
 from bs4 import BeautifulSoup
@@ -94,36 +93,3 @@ def get_webpage_text(url: str):
         menu_items = call_gemini(prompt=prompt, url=url, mimetype=mimetype)
         logger.info(f"Extracted menu items from {url}: {menu_items[:250]}...")
         return menu_items,url
-
-def save_screenshot_to_gcs(url: str, bucket_name: str):
-    """
-    Renders a URL in a headless browser, saves a full-page screenshot to a GCS bucket,
-    and returns the GCS URL of the saved image.
-
-    Args:
-        url (str): The URL to take a screenshot of.
-        bucket_name (str): The name of the Google Cloud Storage bucket.
-
-    Returns:
-        str: The GCS URL of the saved image (e.g., gs://bucket/savedimage.jpg).
-    """
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        try:
-            page.goto(url, wait_until="networkidle")
-            screenshot_filename = f"screenshot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-            page.screenshot(path=screenshot_filename, full_page=True)
-
-            # Upload to GCS
-            storage_client = storage.Client()
-            bucket = storage_client.bucket(bucket_name)
-            blob = bucket.blob(screenshot_filename)
-            blob.upload_from_filename(screenshot_filename)
-
-            # Clean up the temporary file
-            os.remove(screenshot_filename)
-
-            return f"gs://{bucket_name}/{screenshot_filename}"
-        finally:
-            browser.close()
