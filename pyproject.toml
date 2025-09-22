@@ -1,0 +1,108 @@
+[tool.poetry]
+name = "restaurantagent"
+version = "0.1.0"
+description = "An agent-based application for finding restaurants and their menus."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "restaurantagent"}]
+
+[tool.poetry.dependencies]
+python = "^3.11" # Assuming Python 3.11+ based on modern libraries
+google-adk = "^1.13.0"
+google-genai = "^1.27.0"
+googlemaps = "*"
+python-dotenv = "^1.0.1"
+beautifulsoup4 = "^4.13.4"
+requests = "^2.32.4"
+playwright = "^1.54.0"
+google-cloud-storage = "^2.19.0"
+bs4 = "*" # beautifulsoup4 is the package, bs4 is an alias often used. Added for clarity.
+
+# Core Google Cloud libraries
+google-api-core = "^2.25.1"
+google-auth = "^2.40.3"
+google-cloud-aiplatform = {extras = ["agent_engines", "adk"], version = "^1.112.0"}
+
+# Web framework and server
+fastapi = "^0.116.1"
+uvicorn = {extras = ["standard"], version = "^0.35.0"}
+
+[tool.poetry.group.dev.dependencies]
+# Linters, formatters, and development tools can be added here.
+# Example:
+# ruff = "^0.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+# The following dependencies were found in requirements.txt but are likely
+# transitive dependencies (installed automatically by the main packages above).
+# They are kept here for reference but are commented out.
+# If you encounter import errors, you can uncomment the necessary ones.
+
+# a2a-sdk = "==0.2.16"
+# absl-py = "==2.3.1"
+# absolufy-imports = "==0.3.1"
+# aiohappyeyeballs = "==2.6.1"
+# aiohttp = "==3.12.14"
+# aiosignal = "==1.4.0"
+# alembic = "==1.16.5"
+# annotated-types = "==0.7.0"
+# anyio = "==4.9.0"
+# attrs = "==25.3.0"
+# Authlib = "==1.6.1"
+# blinker = "==1.9.0"
+# build = "==1.2.2.post1"
+# CacheControl = "==0.14.3"
+# cachetools = "==5.5.2"
+# certifi = "==2025.7.14"
+# cffi = "==1.17.1"
+# charset-normalizer = "==3.4.2"
+# cleo = "==2.1.3"
+# click = "==8.2.1"
+# cloudpickle = "==3.1.1"
+# crashtest = "==0.4.1"
+# cryptography = "==45.0.5"
+# Deprecated = "==1.2.18"
+# distlib = "==0.3.9"
+# distro = "==1.9.0"
+# docstring_parser = "==0.17.0"
+# dulwich = "==0.22.8"
+# fastjsonschema = "==2.21.1"
+# filelock = "==3.18.0"
+# findpython = "==0.6.3"
+# Flask = "==3.1.1"
+# frozenlist = "==1.7.0"
+# fsspec = "==2025.7.0"
+# google-api-python-client = "==2.177.0"
+# google-auth-httplib2 = "==0.2.0"
+# google-cloud-appengine-logging = "==1.6.2"
+# google-cloud-audit-log = "==0.3.2"
+# google-cloud-bigquery = "==3.35.1"
+# google-cloud-bigtable = "==2.32.0"
+# google-cloud-core = "==2.4.3"
+# google-cloud-logging = "==3.12.1"
+# google-cloud-resource-manager = "==1.14.2"
+# google-cloud-secret-manager = "==2.24.0"
+# google-cloud-spanner = "==3.57.0"
+# google-cloud-speech = "==2.33.0"
+# google-cloud-trace = "==1.16.2"
+# google-crc32c = "==1.7.1"
+# google-resumable-media = "==2.7.2"
+# googleapis-common-protos = "==1.70.0"
+# grpcio = "^1.74.0"
+# h11 = "==0.16.0"
+# httpcore = "^1.0.9"
+# httplib2 = "==0.22.0"
+# httpx = "^0.28.1"
+# idna = "==3.10"
+# itsdangerous = "==2.2.0"
+# Jinja2 = "==3.1.6"
+# Mako = "==1.3.10"
+# MarkupSafe = "==3.0.2"
+# pydantic = "^2.11.7"
+# starlette = "^0.47.2"
+# urllib3 = "^2.5.0"
+# Werkzeug = "==3.1.3"
