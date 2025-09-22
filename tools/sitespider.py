@@ -6,20 +6,25 @@ from google.cloud import storage
 from restaurantagent.tools.vertexai import call_gemini
 from bs4 import BeautifulSoup
 import logging
+import asyncio
+from typing import AsyncGenerator
+from concurrent.futures import ThreadPoolExecutor
+import httpx
 
 # Get a logger for this module
 logger = logging.getLogger(__name__)
 
+
 def get_menu(url: str)->str:
     """
-    Finds the menu present in the website in webpage or images.
+    Finds the menu present in the website in webpage or images and streams back the result.
     
 
     Args:
         url (str): The URL of the website to spider.
 
     Returns:
-        Menu item found in the website along with menu item url.
+        Menu item found in the website is streamed back asynchronously.
     """
     logger.info(f"Finding internal links for URL: {url}")
     headers = {
@@ -52,12 +57,15 @@ def get_menu(url: str)->str:
     menulink=""
     menuimages=[]
     menuitems=""
-    for link in internal_links:
-        mitems,mlink=get_webpage_text(link)
-        menulink+=mlink
-        menuitems+=mitems
+    with ThreadPoolExecutor() as executor:
+        results = executor.map(get_webpage_text, internal_links)
+
+    for mitems, mlink in results:
+        menulink += mlink
+        menuitems += mitems
         
     return menuitems+"\n"+menulink
+
 
 def get_webpage_text(url: str):
     """

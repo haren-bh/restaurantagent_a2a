@@ -1,7 +1,7 @@
 
 import logging
 from google.adk.agents import LlmAgent
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 # A2A

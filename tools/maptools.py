@@ -9,6 +9,7 @@ import logging
 load_dotenv()
 
 # Get a logger for this module
+logging.basicConfig(filename='agent.log', level=logging.INFO, format='%(asctime)s - %(filename)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def find_restaurants(location:str, radius_km:int=1):
@@ -22,7 +23,7 @@ def find_restaurants(location:str, radius_km:int=1):
     Returns:
         str: A JSON string representing a list of restaurants with detailed information.
     """
-    logger.info(f"Finding restaurants near '{location}' with radius {radius_km}km.")
+    logger.error(f"Finding restaurants near '{location}' with radius {radius_km}km.")
     api_key = os.environ.get("GOOGLE_MAPS_API_KEY") or GOOGLE_MAPS_API_KEY
 
     if not api_key:

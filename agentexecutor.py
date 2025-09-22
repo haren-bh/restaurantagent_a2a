@@ -56,6 +56,7 @@ import os
 
 import vertexai
 from google.genai import types
+from .agent import root_agent
 
 PROJECT_ID = "datapipeline-372305"  # @param {type: "string", placeholder: "[your-project-id]", isTemplate: true}
 if not PROJECT_ID or PROJECT_ID == "[your-project-id]":
@@ -259,7 +260,7 @@ from google.adk.tools import google_search_tool
 # Agent Engine
 from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
 
-root_agent=LlmAgent(
+local_root_agent=LlmAgent(
     # The LLM model to use
     model="gemini-2.5-flash",
     # Internal name for the agent (used in logging and sessions)

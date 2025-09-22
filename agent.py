@@ -51,9 +51,32 @@ from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
 from restaurantagent.agents.agents import create_restaurant_finder_agent,menu_gatherer,create_generic_search_agent
 from google.adk.sessions import InMemorySessionService, Session
 temp_service = InMemorySessionService()
-
+from google.adk.tools.agent_tool import AgentTool
+import sys
 # Configure logging to show detailed output from all modules
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+root_logger = logging.getLogger()
+# 2. Check and remove any existing handlers that might have been added by an import
+if root_logger.handlers:
+    # This prevents duplicate log messages if a handler already exists
+    root_logger.handlers = []
+
+# 3. Explicitly set the desired log level (DEBUG for maximum verbosity)
+root_logger.setLevel(logging.DEBUG)
+
+# 4. Define the log message formatter
+formatter = logging.Formatter(
+    fmt='%(asctime)s - %(filename)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# 5. Add a File Handler (to write to agent.log)
+file_handler = logging.FileHandler('agent.log')
+file_handler.setFormatter(formatter)
+root_logger.addHandler(file_handler)
+
+# 6. Add a Stream Handler (to show logs in the console/terminal as well)
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(formatter)
+root_logger.addHandler(console_handler)
 
 restaurant_finder_agent = create_restaurant_finder_agent()
 generic_search_agent=create_generic_search_agent()
@@ -63,6 +86,7 @@ def create_root_agent() -> LlmAgent:
 
     # A delegating LlmAgent uses its own LLM to route user requests to the
     # appropriate sub-agent based on their descriptions.
+    logging.error("Creating root agent")
     agent = LlmAgent(
         name="root_agent",
         model="gemini-2.5-pro",
@@ -81,34 +105,13 @@ def create_root_agent() -> LlmAgent:
             ),
         #sub_agents=[restaurant_finder_agent,menu_gatherer,generic_search_agent],
         #sub_agents=[restaurant_finder_agent,menu_gatherer],
-        output_key="searched_restaurant_info"
+        tools=[AgentTool(agent=restaurant_finder_agent),AgentTool(agent=menu_gatherer),AgentTool(agent=generic_search_agent)],
+        #sub_agents=[restaurant_finder_agent],
+        #tools=[google_search_tool.google_search],
+        output_key="searched_restaurant_info",
+        #tools=[AgentTool(agent=restaurant_finder_agent)],
     )
     return agent
-
-#root_agent=create_root_agent()
-
-root_agent=LlmAgent(
-    # The LLM model to use
-    model="gemini-2.5-flash",
-    # Internal name for the agent (used in logging and sessions)
-    name="qa_assistant",
-    # Human-readable description
-    description="I answer questions using web search.",
-    # The system instruction that guides the agent's behavior
-    # This is crucial for getting good results
-    instruction="""You are a helpful Q&A assistant.
-        When asked a question:
-        1. Use Google Search to find current, accurate information
-        2. Synthesize the search results into a clear answer
-        3. Cite your sources when possible
-        4. If you can't find a good answer, say so honestly
-
-        Always aim for accuracy over speculation.""",
-    # Tools available to the agent
-    # The agent will automatically use these when needed
-    tools=[google_search_tool.google_search],
-)
-
 
 restaurant_finder_agent_skill=AgentSkill(
 
@@ -138,3 +141,5 @@ restaurant_finder_agent_card = create_agent_card(
     description="Finds the restaurants near a location",
     skills=[restaurant_finder_agent_skill],
 )
+
+root_agent=create_root_agent()
